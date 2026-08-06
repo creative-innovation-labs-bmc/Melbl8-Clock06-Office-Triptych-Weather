@@ -1,15 +1,15 @@
 name: Apply final crop and fallback QC patch
 
 on:
-  push:
-    paths:
-      - '.github/workflows/patch-qc4.yml'
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
 
 jobs:
   patch:
+    if: github.event.issue.title == 'Run final QC4 patch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
