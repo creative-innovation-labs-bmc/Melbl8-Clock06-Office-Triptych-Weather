@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Double delete and type delays
+      - name: Slow animation and preserve panel staggering
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -31,19 +31,31 @@ jobs:
           new_out = "await sleep(20,token,p)"
           old_in = "await sleep(p.name==='centre'?19:16,token,p)"
           new_in = "await sleep(p.name==='centre'?38:32,token,p)"
+          old_offsets = "LEFT_OFFSET=5000,RIGHT_OFFSET=20000"
+          new_offsets = "LEFT_OFFSET=7000,RIGHT_OFFSET=22000"
 
           def patch(text: str, label: str) -> str:
-              if new_out in text and new_in in text:
-                  print(f'{label}: half-speed timing already present')
-                  return text
-              if text.count(old_out) != 1:
-                  raise SystemExit(f'{label}: expected one delete timing marker, found {text.count(old_out)}')
-              if text.count(old_in) != 1:
-                  raise SystemExit(f'{label}: expected one type timing marker, found {text.count(old_in)}')
-              text = text.replace(old_out, new_out, 1)
-              text = text.replace(old_in, new_in, 1)
-              if old_out in text or old_in in text:
-                  raise SystemExit(f'{label}: old timing markers remain')
+              if old_out in text:
+                  if text.count(old_out) != 1:
+                      raise SystemExit(f'{label}: expected one delete timing marker, found {text.count(old_out)}')
+                  text = text.replace(old_out, new_out, 1)
+              elif new_out not in text:
+                  raise SystemExit(f'{label}: delete timing marker missing')
+
+              if old_in in text:
+                  if text.count(old_in) != 1:
+                      raise SystemExit(f'{label}: expected one type timing marker, found {text.count(old_in)}')
+                  text = text.replace(old_in, new_in, 1)
+              elif new_in not in text:
+                  raise SystemExit(f'{label}: type timing marker missing')
+
+              if old_offsets in text:
+                  if text.count(old_offsets) != 1:
+                      raise SystemExit(f'{label}: expected one offset marker, found {text.count(old_offsets)}')
+                  text = text.replace(old_offsets, new_offsets, 1)
+              elif new_offsets not in text:
+                  raise SystemExit(f'{label}: offset marker missing')
+
               return text
 
           html = patch(index.read_text(encoding='utf-8'), 'index.html')
@@ -59,11 +71,14 @@ jobs:
               encoding='utf-8',
           )
 
-          assert "await sleep(20,token,p)" in html
-          assert "await sleep(p.name==='centre'?38:32,token,p)" in html
+          assert new_out in html
+          assert new_in in html
+          assert new_offsets in html
           print('Delete timing: 10ms -> 20ms per character')
           print('Side typing: 16ms -> 32ms per character')
           print('Centre typing: 19ms -> 38ms per character')
+          print('Left transition offset: 7 seconds')
+          print('Right transition offset: 22 seconds')
           PY
 
       - name: Commit animation timing update
@@ -74,7 +89,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Animation timing already current."
           else
-            git commit -m "Slow clock animation to half speed"
+            git commit -m "Slow clock animation and preserve staggering"
             git push
           fi
 
