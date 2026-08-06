@@ -1,16 +1,19 @@
-/* Tighter three-line stack for the 3840 × 804 triptych. */
+/* Centred three-line stack with safe PT Serif descender space. */
 .message {
   top: 132px !important;
-  bottom: 70px !important;
+  bottom: 64px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
   align-content: normal !important;
   grid-template-rows: none !important;
-  gap: 18px !important;
-  row-gap: 18px !important;
+  gap: 4px !important;
+  row-gap: 4px !important;
+  overflow: visible !important;
 }
 
 .message > .line {
   flex: 0 0 auto !important;
+  line-height: 1.08 !important;
+  overflow: visible !important;
 }
