@@ -15,8 +15,8 @@
 .title{position:absolute;top:42px;left:var(--pad);right:var(--pad);height:42px;display:flex;align-items:baseline;justify-content:space-between;gap:28px;white-space:nowrap;overflow:hidden;font:600 25px/1.2 "Open Sans Local","Open Sans",Arial,sans-serif;color:var(--muted);letter-spacing:.006em}.title-left{display:flex;align-items:baseline;min-width:0;overflow:hidden;white-space:nowrap}.title .place{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:clip;font-weight:700;color:var(--text)}.title .clock{flex:none;margin-left:16px;color:var(--green);font-variant-numeric:tabular-nums}.title .date{flex:none;margin-left:16px}.weather{flex:none;min-width:188px;text-align:right;color:var(--text);font-weight:600}.weather.is-stale{color:var(--muted)}
 .progress{position:absolute;left:var(--pad);right:var(--pad);top:100px;height:4px;background:rgba(137,201,37,.14);overflow:hidden}.progress>i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;will-change:transform}.message{position:absolute;left:var(--pad);right:var(--pad);top:134px;bottom:42px;display:grid;grid-template-rows:repeat(3,minmax(0,1fr));row-gap:10px;align-content:center;overflow:hidden}.line{display:flex;align-items:center;min-width:0;overflow:hidden;white-space:pre;font-family:"PT Serif Local","PT Serif","Noto Serif","Noto Serif CJK TC","Noto Serif CJK SC","Noto Serif Thai",Georgia,serif;font-size:var(--message-size);font-weight:700;line-height:.96;letter-spacing:-.022em;color:var(--text);font-synthesis:none}.line.time{color:var(--green)}.typed{display:inline-block;min-width:0}.cursor{display:inline-block;flex:0 0 auto;width:7px;height:.8em;margin-left:.08em;background:var(--green);transform:translateY(.03em)}.cursor[hidden]{display:none}.cursor.blink{animation:blink 1s steps(1,end) infinite}@keyframes blink{0%,48%{opacity:1}49%,100%{opacity:0}}.divider{position:absolute;top:0;bottom:0;width:2px;background:var(--divider);z-index:5}.d1{left:1279px}.d2{left:2559px}.attribution{position:absolute;left:50%;bottom:10px;z-index:6;transform:translateX(-50%);color:rgba(244,242,234,.34);font:13px/1 "Open Sans Local",Arial,sans-serif;letter-spacing:.02em}.rotate{position:fixed;inset:0;z-index:20;display:grid;place-content:center;text-align:center;padding:36px;background:rgba(18,19,18,.97);color:var(--text);font:18px/1.4 "Open Sans Local",Arial,sans-serif}.rotate[hidden]{display:none}.rotate strong{display:block;margin-bottom:10px;color:var(--green);font-size:42px}@media(prefers-reduced-motion:reduce){.cursor.blink{animation-duration:1.8s}}
 </style>
-<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit4">
-<style id="fit-stack-v4">
+<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit5">
+<style id="fit-stack-v5">
 .message {
   top: 132px !important;
   bottom: 64px !important;
@@ -138,7 +138,7 @@ function measure(p,lines){
   for(let k=0;k<18;k++){
     const mid=(lo+hi)/2;
     p.lines.forEach(l=>{l.root.style.fontSize=mid+'px'});
-    const widest=Math.max(...p.lines.map(l=>Math.ceil(l.typed.getBoundingClientRect().width+18)));
+    const widest=Math.max(...p.lines.map(l=>Math.ceil(l.typed.scrollWidth+18)));
     if(widest<=PANEL_TEXT_W)lo=mid;else hi=mid;
   }
   const fitted=Math.floor(lo*100)/100;
@@ -162,7 +162,42 @@ async function fetchWeather(){if(mockWeather){mockData();return}const controller
 function tick(perf=performance.now()){const date=now(perf),sec=Math.floor(date.getTime()/1000);if(sec!==last){last=sec;update(date)}if(!weatherUpdated||Date.now()-weatherUpdated>WEATHER_REFRESH){weatherUpdated=Date.now();fetchWeather().then(()=>{refreshMelbourneWeatherLine();update(now())})}requestAnimationFrame(tick)}
 addEventListener('resize',scale,{passive:true});addEventListener('orientationchange',scale,{passive:true});visualViewport&&visualViewport.addEventListener('resize',scale,{passive:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden){last=-1;scale();fetchWeather()}});
 window.__clock={get panels(){return Object.fromEntries(Object.entries(panels).map(([n,p])=>[n,{office:p.office&&p.office.id,title:p.title.textContent,lines:p.lines.map(l=>l.typed.textContent),fontSize:parseFloat(getComputedStyle(p.lines[0].root).fontSize),progress:parseFloat((p.progress.style.transform.match(/scaleX\(([^)]+)/)||[])[1]||0)}]))},get weather(){return Object.fromEntries(weather)},offsetMinutes,relationLine};
-scale();update(now());fetchWeather().then(()=>{refreshMelbourneWeatherLine();update(now())});requestAnimationFrame(tick);
+let clockStarted=false;
+function refitRenderedPanels(){
+  if(!clockStarted)return;
+  for(const p of Object.values(panels)){
+    if(Array.isArray(p.rendered)&&p.rendered.length===3)size(p,p.rendered);
+  }
+}
+async function bootClock(){
+  scale();
+  if(document.fonts){
+    try{
+      await Promise.allSettled([
+        document.fonts.load('700 116px "PT Serif Local"'),
+        document.fonts.load('600 25px "Open Sans Local"')
+      ]);
+      await Promise.race([
+        document.fonts.ready,
+        new Promise(resolve=>setTimeout(resolve,3000))
+      ]);
+    }catch(error){
+      console.warn('Font preload unavailable',error);
+    }
+  }
+  clockStarted=true;
+  update(now());
+  fetchWeather().then(()=>{
+    refreshMelbourneWeatherLine();
+    update(now());
+    refitRenderedPanels();
+  });
+  requestAnimationFrame(tick);
+}
+if(document.fonts&&document.fonts.addEventListener){
+  document.fonts.addEventListener('loadingdone',()=>requestAnimationFrame(refitRenderedPanels));
+}
+bootClock();
 })();
 </script>
 </body>
