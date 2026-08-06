@@ -11,7 +11,6 @@ if 'id="fit-stack-v3"' in html and 'const widest=Math.max(...p.lines.map(l=>Math
     print('fit-stack-v3 already present')
     raise SystemExit(0)
 
-old_link = '<link rel="stylesheet" href="./tight-spacing.css?v=20260806-tight1">'
 new_layout = '''<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit3">
 <style id="fit-stack-v3">
 .message {
@@ -34,9 +33,12 @@ new_layout = '''<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit3
 }
 </style>'''
 
-if old_link not in html:
-    raise SystemExit('Expected tight-spacing link was not found')
-html = html.replace(old_link, new_layout, 1)
+link_pattern = re.compile(r'<link rel="stylesheet" href="\./tight-spacing\.css\?v=[^"]+">')
+html, link_count = link_pattern.subn(new_layout, html, count=1)
+if link_count == 0:
+    if '</head>' not in html:
+        raise SystemExit('No head element found for layout injection')
+    html = html.replace('</head>', new_layout + '</head>', 1)
 
 pattern = re.compile(
     r"function measure\(p,lines\)\{.*?\}\nfunction size\(p,lines\)\{",
