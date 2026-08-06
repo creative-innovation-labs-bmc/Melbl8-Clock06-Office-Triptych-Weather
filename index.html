@@ -75,7 +75,7 @@
 (function(){
 'use strict';
 const STAGE_W=3840,STAGE_H=804,PANEL_TEXT_W=1136,MAX_SIZE=116,MIN_SIZE=42;
-const SIDE_MS=30000,CENTRE_MS=60000,LEFT_OFFSET=5000,RIGHT_OFFSET=20000,WEATHER_REFRESH=600000;
+const SIDE_MS=30000,CENTRE_MS=60000,LEFT_OFFSET=7000,RIGHT_OFFSET=22000,WEATHER_REFRESH=600000;
 const q=new URLSearchParams(location.search),noanim=q.get('noanim')==='1',demo=q.get('demo')==='1',mockWeather=q.get('weather')==='mock',demoInterval=Math.max(2200,Number(q.get('interval'))||5000),freeze=q.get('freeze');
 const pinned={left:q.get('left'),right:q.get('right')};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
