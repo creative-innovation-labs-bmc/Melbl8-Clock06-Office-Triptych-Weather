@@ -27,7 +27,17 @@ jobs:
         run: |
           mkdir -p _site/assets/fonts assets/fonts
           base64 --decode build/index.html.gz.b64 | gzip --decompress > index.html
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          link = '<link rel="stylesheet" href="./tight-spacing.css?v=20260806-tight1">'
+          if link not in html:
+              html = html.replace('</head>', f'{link}</head>')
+          path.write_text(html, encoding='utf-8')
+          PY
           cp index.html _site/index.html
+          cp tight-spacing.css _site/tight-spacing.css
           cp robots.txt _site/robots.txt
           touch _site/.nojekyll
 
@@ -66,7 +76,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html assets/fonts
+          git add index.html tight-spacing.css assets/fonts
           if git diff --cached --quiet; then
             echo "Repository files already current."
           else
