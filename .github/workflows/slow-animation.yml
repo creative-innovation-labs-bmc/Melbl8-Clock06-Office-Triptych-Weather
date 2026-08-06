@@ -1,0 +1,84 @@
+name: Apply half-speed clock animation
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  patch:
+    if: github.event.issue.title == 'Run half-speed animation patch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Double delete and type delays
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          import gzip
+
+          payload = Path('build/index.html.gz.b64')
+          index = Path('index.html')
+
+          old_out = "await sleep(10,token,p)"
+          new_out = "await sleep(20,token,p)"
+          old_in = "await sleep(p.name==='centre'?19:16,token,p)"
+          new_in = "await sleep(p.name==='centre'?38:32,token,p)"
+
+          def patch(text: str, label: str) -> str:
+              if new_out in text and new_in in text:
+                  print(f'{label}: half-speed timing already present')
+                  return text
+              if text.count(old_out) != 1:
+                  raise SystemExit(f'{label}: expected one delete timing marker, found {text.count(old_out)}')
+              if text.count(old_in) != 1:
+                  raise SystemExit(f'{label}: expected one type timing marker, found {text.count(old_in)}')
+              text = text.replace(old_out, new_out, 1)
+              text = text.replace(old_in, new_in, 1)
+              if old_out in text or old_in in text:
+                  raise SystemExit(f'{label}: old timing markers remain')
+              return text
+
+          html = patch(index.read_text(encoding='utf-8'), 'index.html')
+          packed_html = gzip.decompress(base64.b64decode(payload.read_text().strip())).decode('utf-8')
+          packed_html = patch(packed_html, 'build payload')
+
+          if html != packed_html:
+              raise SystemExit('index.html and build payload diverged after timing patch')
+
+          index.write_text(html, encoding='utf-8')
+          payload.write_text(
+              base64.b64encode(gzip.compress(html.encode('utf-8'), compresslevel=9, mtime=0)).decode('ascii') + '\n',
+              encoding='utf-8',
+          )
+
+          assert "await sleep(20,token,p)" in html
+          assert "await sleep(p.name==='centre'?38:32,token,p)" in html
+          print('Delete timing: 10ms -> 20ms per character')
+          print('Side typing: 16ms -> 32ms per character')
+          print('Centre typing: 19ms -> 38ms per character')
+          PY
+
+      - name: Commit animation timing update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html build/index.html.gz.b64
+          if git diff --cached --quiet; then
+            echo "Animation timing already current."
+          else
+            git commit -m "Slow clock animation to half speed"
+            git push
+          fi
+
+      - name: Close trigger issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close ${{ github.event.issue.number }} --reason completed
