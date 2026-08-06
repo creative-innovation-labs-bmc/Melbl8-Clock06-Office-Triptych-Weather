@@ -15,7 +15,27 @@
 .title{position:absolute;top:42px;left:var(--pad);right:var(--pad);height:42px;display:flex;align-items:baseline;justify-content:space-between;gap:28px;white-space:nowrap;overflow:hidden;font:600 25px/1.2 "Open Sans Local","Open Sans",Arial,sans-serif;color:var(--muted);letter-spacing:.006em}.title-left{display:flex;align-items:baseline;min-width:0;overflow:hidden;white-space:nowrap}.title .place{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:clip;font-weight:700;color:var(--text)}.title .clock{flex:none;margin-left:16px;color:var(--green);font-variant-numeric:tabular-nums}.title .date{flex:none;margin-left:16px}.weather{flex:none;min-width:188px;text-align:right;color:var(--text);font-weight:600}.weather.is-stale{color:var(--muted)}
 .progress{position:absolute;left:var(--pad);right:var(--pad);top:100px;height:4px;background:rgba(137,201,37,.14);overflow:hidden}.progress>i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;will-change:transform}.message{position:absolute;left:var(--pad);right:var(--pad);top:134px;bottom:42px;display:grid;grid-template-rows:repeat(3,minmax(0,1fr));row-gap:10px;align-content:center;overflow:hidden}.line{display:flex;align-items:center;min-width:0;overflow:hidden;white-space:pre;font-family:"PT Serif Local","PT Serif","Noto Serif","Noto Serif CJK TC","Noto Serif CJK SC","Noto Serif Thai",Georgia,serif;font-size:var(--message-size);font-weight:700;line-height:.96;letter-spacing:-.022em;color:var(--text);font-synthesis:none}.line.time{color:var(--green)}.typed{display:inline-block;min-width:0}.cursor{display:inline-block;flex:0 0 auto;width:7px;height:.8em;margin-left:.08em;background:var(--green);transform:translateY(.03em)}.cursor[hidden]{display:none}.cursor.blink{animation:blink 1s steps(1,end) infinite}@keyframes blink{0%,48%{opacity:1}49%,100%{opacity:0}}.divider{position:absolute;top:0;bottom:0;width:2px;background:var(--divider);z-index:5}.d1{left:1279px}.d2{left:2559px}.attribution{position:absolute;left:50%;bottom:10px;z-index:6;transform:translateX(-50%);color:rgba(244,242,234,.34);font:13px/1 "Open Sans Local",Arial,sans-serif;letter-spacing:.02em}.rotate{position:fixed;inset:0;z-index:20;display:grid;place-content:center;text-align:center;padding:36px;background:rgba(18,19,18,.97);color:var(--text);font:18px/1.4 "Open Sans Local",Arial,sans-serif}.rotate[hidden]{display:none}.rotate strong{display:block;margin-bottom:10px;color:var(--green);font-size:42px}@media(prefers-reduced-motion:reduce){.cursor.blink{animation-duration:1.8s}}
 </style>
-<link rel="stylesheet" href="./tight-spacing.css?v=20260806-tight1"></head>
+<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit3">
+<style id="fit-stack-v3">
+.message {
+  top: 132px !important;
+  bottom: 64px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-content: normal !important;
+  grid-template-rows: none !important;
+  gap: 4px !important;
+  row-gap: 4px !important;
+  overflow: visible !important;
+}
+.message > .line {
+  flex: 0 0 auto !important;
+  line-height: 1.08 !important;
+  overflow: visible !important;
+  padding-bottom: .04em !important;
+}
+</style></head>
 <body>
 <main id="viewport">
 <section id="stage">
@@ -25,7 +45,7 @@
     <div class="message" id="leftMessage" lang="zh-Hant">
       <div class="line"><span class="typed">致香港的同事，</span><span class="cursor blink"></span></div>
       <div class="line time"><span class="typed">現在時間</span><span class="cursor" hidden></span></div>
-      <div class="line"><span class="typed">Keeping pace with Melbourne.</span><span class="cursor" hidden></span></div>
+      <div class="line"><span class="typed">與墨爾本時間相同。</span><span class="cursor" hidden></span></div>
     </div>
   </article>
   <article class="panel centre" id="centrePanel">
@@ -43,7 +63,7 @@
     <div class="message" id="rightMessage" lang="id">
       <div class="line"><span class="typed">Untuk rekan kami di Jakarta,</span><span class="cursor blink"></span></div>
       <div class="line time"><span class="typed">waktu setempat</span><span class="cursor" hidden></span></div>
-      <div class="line"><span class="typed">Following Melbourne by three hours.</span><span class="cursor" hidden></span></div>
+      <div class="line"><span class="typed">Jakarta tiga jam lebih lambat dari Melbourne.</span><span class="cursor" hidden></span></div>
     </div>
   </article>
   <div class="divider d1"></div><div class="divider d2"></div>
@@ -109,7 +129,23 @@ function fullWeekday(shortName){return{Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday
 function melbourneThird(o,pt){const w=weather.get(o.id),part=dayPart(pt.h),day=fullWeekday(pt.weekday),options=[];if(w){const condition=weatherLabel(w.code).toLowerCase(),adjective=weatherAdjective(w.code),temperature=Math.round(w.temperature);options.push('A '+temperatureWord(w.temperature)+', '+adjective+' '+part+'.');options.push(temperature+'° and '+condition+' outside.');options.push(day+' '+part+', with '+adjective+' skies.')}options.push(day+' '+part+' in Melbourne.');options.push('The '+part+' is moving along.');return options[pt.m%options.length]}
 function message(p,o,pt,date){if(p.name==='centre'){const leads=['In Melbourne, it is','Here in Melbourne, it is','For Melbourne, the time is'];return[leads[pt.m%leads.length],o.time(pt.h,pt.m),melbourneThird(o,pt)]}const i=((slot(p,date)+(p.name==='right'?1:0))%o.intro.length+o.intro.length)%o.intro.length;return[o.intro[i],o.time(pt.h,pt.m),relationLine(p,o,date)]}
 function title(p,o,pt){const w=weather.get(o.id),weatherText=w?Math.round(w.temperature)+'° · '+weatherLabel(w.code):(weatherStatus==='failed'?'Weather unavailable':'Weather loading');p.title.innerHTML='<span class="title-left"><span class="place">'+o.city+', '+o.country+'</span><span class="clock">'+pt.digital+'</span><span class="date">'+pt.date+'</span></span><span class="weather '+(w?'':'is-stale')+'">'+weatherText+'</span>'}
-function measure(p,lines){const probe=p.lines[0].root.cloneNode(true),typed=probe.querySelector('.typed');probe.querySelector('.cursor').remove();Object.assign(probe.style,{position:'absolute',left:'-10000px',top:'0',width:'max-content',maxWidth:'none',overflow:'visible',visibility:'hidden'});document.body.append(probe);function widthAt(size){probe.style.fontSize=size+'px';let wide=0;for(const t of lines){typed.textContent=t||' ';wide=Math.max(wide,probe.scrollWidth)}return wide}let lo=MIN_SIZE,hi=MAX_SIZE;for(let k=0;k<16;k++){const mid=(lo+hi)/2;if(widthAt(mid)<=PANEL_TEXT_W-10)lo=mid;else hi=mid}probe.remove();return Math.floor(lo*100)/100}
+function measure(p,lines){
+  const snapshots=p.lines.map(l=>({text:l.typed.textContent,cursorHidden:l.cursor.hidden,fontSize:l.root.style.fontSize}));
+  const previousVisibility=p.msg.style.visibility;
+  p.msg.style.visibility='hidden';
+  p.lines.forEach((l,index)=>{l.typed.textContent=lines[index]||' ';l.cursor.hidden=true});
+  let lo=MIN_SIZE,hi=MAX_SIZE;
+  for(let k=0;k<18;k++){
+    const mid=(lo+hi)/2;
+    p.lines.forEach(l=>{l.root.style.fontSize=mid+'px'});
+    const widest=Math.max(...p.lines.map(l=>Math.ceil(l.root.scrollWidth)));
+    if(widest<=PANEL_TEXT_W-12)lo=mid;else hi=mid;
+  }
+  const fitted=Math.floor(lo*100)/100;
+  p.lines.forEach((l,index)=>{l.typed.textContent=snapshots[index].text;l.cursor.hidden=snapshots[index].cursorHidden;l.root.style.fontSize=snapshots[index].fontSize});
+  p.msg.style.visibility=previousVisibility;
+  return fitted;
+}
 function size(p,lines){const s=measure(p,lines);p.msg.style.setProperty('--message-size',s+'px');p.lines.forEach(l=>l.root.style.fontSize=s+'px')}
 function cursor(l,working,visible=true){l.cursor.hidden=!visible;l.cursor.classList.toggle('blink',visible&&!working)}
 function sleep(ms,token,p){return new Promise((res,rej)=>setTimeout(()=>token===p.token?res():rej(new DOMException('Superseded','AbortError')),ms))}
