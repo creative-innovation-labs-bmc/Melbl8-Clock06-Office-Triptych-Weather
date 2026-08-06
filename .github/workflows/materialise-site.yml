@@ -1,18 +1,17 @@
 name: Materialise production site
 
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - "build/index.html.gz.b64"
-      - ".github/workflows/materialise-site.yml"
+  issues:
+    types: [opened, reopened]
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.issue.title, '[Deploy tested site]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,3 +44,9 @@ jobs:
             git commit -m "Build weather triptych and vendor fonts"
             git push
           fi
+
+      - name: Close deployment request
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close "${{ github.event.issue.number }}" --comment "Tested production site materialised and fonts vendored."
