@@ -6,6 +6,11 @@ import re
 PAYLOAD = Path('build/index.html.gz.b64')
 html = gzip.decompress(base64.b64decode(PAYLOAD.read_text().strip())).decode('utf-8')
 
+if 'id="fit-stack-v3"' in html and 'const widest=Math.max(...p.lines.map(l=>Math.ceil(l.root.scrollWidth)))' in html:
+    Path('index.html').write_text(html, encoding='utf-8')
+    print('fit-stack-v3 already present')
+    raise SystemExit(0)
+
 old_link = '<link rel="stylesheet" href="./tight-spacing.css?v=20260806-tight1">'
 new_layout = '''<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit3">
 <style id="fit-stack-v3">
