@@ -1,14 +1,130 @@
 <!doctype html>
 <html lang="en-AU">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Melbl8-Clock06-Office-Triptych-Weather</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+<meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+<meta name="theme-color" content="#373A36">
+<title>Aurecon Office Triptych Weather Clock</title>
+<style>
+@font-face{font-family:"PT Serif Local";src:url("./assets/fonts/PT_Serif-Web-Bold.ttf") format("truetype");font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:"Open Sans Local";src:url("./assets/fonts/OpenSans-Variable.ttf") format("truetype");font-style:normal;font-weight:300 800;font-display:swap}
+:root{--stage-w:3840px;--stage-h:804px;--panel-w:1280px;--centre:#373A36;--side:#1C1B1C;--divider:#BBC6C3;--text:#F4F2EA;--muted:rgba(244,242,234,.68);--green:#89C925;--pad:72px;--message-size:106px}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#121312}body{color:var(--text);font-family:"Open Sans Local","Open Sans",Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}#viewport{position:fixed;inset:0;overflow:hidden;background:#121312}#stage{position:absolute;left:50%;top:50%;width:var(--stage-w);height:var(--stage-h);display:grid;grid-template-columns:repeat(3,var(--panel-w));transform:translate(-50%,-50%) scale(1);transform-origin:center;overflow:hidden}.panel{position:relative;width:var(--panel-w);height:var(--stage-h);overflow:hidden}.panel.side{background:var(--side)}.panel.centre{background:var(--centre)}
+.title{position:absolute;top:42px;left:var(--pad);right:var(--pad);height:42px;display:flex;align-items:baseline;justify-content:space-between;gap:28px;white-space:nowrap;overflow:hidden;font:600 25px/1.2 "Open Sans Local","Open Sans",Arial,sans-serif;color:var(--muted);letter-spacing:.006em}.title-left{display:flex;align-items:baseline;min-width:0;overflow:hidden;white-space:nowrap}.title .place{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:clip;font-weight:700;color:var(--text)}.title .clock{flex:none;margin-left:16px;color:var(--green);font-variant-numeric:tabular-nums}.title .date{flex:none;margin-left:16px}.weather{flex:none;min-width:188px;text-align:right;color:var(--text);font-weight:600}.weather.is-stale{color:var(--muted)}
+.progress{position:absolute;left:var(--pad);right:var(--pad);top:100px;height:4px;background:rgba(137,201,37,.14);overflow:hidden}.progress>i{display:block;width:100%;height:100%;background:var(--green);transform:scaleX(0);transform-origin:left;will-change:transform}.message{position:absolute;left:var(--pad);right:var(--pad);top:134px;bottom:42px;display:grid;grid-template-rows:repeat(3,minmax(0,1fr));row-gap:10px;align-content:center;overflow:hidden}.line{display:flex;align-items:center;min-width:0;overflow:hidden;white-space:pre;font-family:"PT Serif Local","PT Serif","Noto Serif","Noto Serif CJK TC","Noto Serif CJK SC","Noto Serif Thai",Georgia,serif;font-size:var(--message-size);font-weight:700;line-height:.96;letter-spacing:-.022em;color:var(--text);font-synthesis:none}.line.time{color:var(--green)}.typed{display:inline-block;min-width:0}.cursor{display:inline-block;flex:0 0 auto;width:7px;height:.8em;margin-left:.08em;background:var(--green);transform:translateY(.03em)}.cursor[hidden]{display:none}.cursor.blink{animation:blink 1s steps(1,end) infinite}@keyframes blink{0%,48%{opacity:1}49%,100%{opacity:0}}.divider{position:absolute;top:0;bottom:0;width:2px;background:var(--divider);z-index:5}.d1{left:1279px}.d2{left:2559px}.attribution{position:absolute;left:50%;bottom:10px;z-index:6;transform:translateX(-50%);color:rgba(244,242,234,.34);font:13px/1 "Open Sans Local",Arial,sans-serif;letter-spacing:.02em}.rotate{position:fixed;inset:0;z-index:20;display:grid;place-content:center;text-align:center;padding:36px;background:rgba(18,19,18,.97);color:var(--text);font:18px/1.4 "Open Sans Local",Arial,sans-serif}.rotate[hidden]{display:none}.rotate strong{display:block;margin-bottom:10px;color:var(--green);font-size:42px}@media(prefers-reduced-motion:reduce){.cursor.blink{animation-duration:1.8s}}
+</style>
 </head>
 <body>
-  <main><h1>Melbl8-Clock06-Office-Triptych-Weather</h1><p>Three-panel multilingual Aurecon office clock with live weather and relative-time commentary for a 3840 × 804 gallery display.</p><p>Starter created. The full implementation is next.</p></main>
-  <script src="app.js"></script>
+<main id="viewport">
+<section id="stage">
+  <article class="panel side" id="leftPanel">
+    <header class="title" id="leftTitle"><span class="title-left"><span class="place">Hong Kong, Hong Kong</span><span class="clock">00:00:00</span><span class="date">Thu 06 Aug</span></span><span class="weather is-stale">Weather loading</span></header>
+    <div class="progress"><i id="leftProgress"></i></div>
+    <div class="message" id="leftMessage" lang="zh-Hant">
+      <div class="line"><span class="typed">致香港的同事，</span><span class="cursor blink"></span></div>
+      <div class="line time"><span class="typed">現在時間</span><span class="cursor" hidden></span></div>
+      <div class="line"><span class="typed">Keeping pace with Melbourne.</span><span class="cursor" hidden></span></div>
+    </div>
+  </article>
+  <article class="panel centre" id="centrePanel">
+    <header class="title" id="centreTitle"><span class="title-left"><span class="place">Melbourne, Australia</span><span class="clock">00:00:00</span><span class="date">Thu 06 Aug</span></span><span class="weather is-stale">Weather loading</span></header>
+    <div class="progress"><i id="centreProgress"></i></div>
+    <div class="message" id="centreMessage" lang="en-AU">
+      <div class="line"><span class="typed">In Melbourne, it is</span><span class="cursor blink"></span></div>
+      <div class="line time"><span class="typed">the current time</span><span class="cursor" hidden></span></div>
+      <div class="line"><span class="typed">A Melbourne afternoon.</span><span class="cursor" hidden></span></div>
+    </div>
+  </article>
+  <article class="panel side" id="rightPanel">
+    <header class="title" id="rightTitle"><span class="title-left"><span class="place">Jakarta, Indonesia</span><span class="clock">00:00:00</span><span class="date">Thu 06 Aug</span></span><span class="weather is-stale">Weather loading</span></header>
+    <div class="progress"><i id="rightProgress"></i></div>
+    <div class="message" id="rightMessage" lang="id">
+      <div class="line"><span class="typed">Untuk rekan kami di Jakarta,</span><span class="cursor blink"></span></div>
+      <div class="line time"><span class="typed">waktu setempat</span><span class="cursor" hidden></span></div>
+      <div class="line"><span class="typed">Following Melbourne by three hours.</span><span class="cursor" hidden></span></div>
+    </div>
+  </article>
+  <div class="divider d1"></div><div class="divider d2"></div>
+  <div class="attribution">Weather data: Open-Meteo</div>
+</section>
+<div class="rotate" id="rotatePrompt" hidden><div><strong>↻</strong>Rotate your phone for the full gallery preview</div></div>
+</main>
+<script>
+(function(){
+'use strict';
+const STAGE_W=3840,STAGE_H=804,PANEL_TEXT_W=1136,MAX_SIZE=116,MIN_SIZE=50;
+const SIDE_MS=30000,CENTRE_MS=60000,RIGHT_OFFSET=15000,WEATHER_REFRESH=600000;
+const q=new URLSearchParams(location.search),noanim=q.get('noanim')==='1',demo=q.get('demo')==='1',mockWeather=q.get('weather')==='mock',demoInterval=Math.max(2200,Number(q.get('interval'))||5000),freeze=q.get('freeze');
+const pinned={left:q.get('left'),right:q.get('right')};
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stage=document.getElementById('stage'),rotate=document.getElementById('rotatePrompt');
+const EN_ONES=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const EN_TENS={20:'twenty',30:'thirty',40:'forty',50:'fifty'};
+function enNum(n){if(n<20)return EN_ONES[n];const t=Math.floor(n/10)*10,o=n%10;return o?EN_TENS[t]+'-'+EN_ONES[o]:EN_TENS[t]}
+function enHour(h){return enNum(h%12||12)}
+function enTime(h,m){if(m===0)return enHour(h)+" o'clock";if(m===15)return'quarter past '+enHour(h);if(m===30)return'half past '+enHour(h);if(m===45)return'quarter to '+enHour(h+1);if(m<30)return enNum(m)+' '+(m===1?'minute':'minutes')+' past '+enHour(h);const r=60-m;return enNum(r)+' '+(r===1?'minute':'minutes')+' to '+enHour(h+1)}
+function zhNum(n){const d=['零','一','二','三','四','五','六','七','八','九'];if(n<10)return d[n];if(n===10)return'十';if(n<20)return'十'+d[n-10];return d[Math.floor(n/10)]+'十'+(n%10?d[n%10]:'')}
+function austNum(n,zero='nol'){const o=[zero,'satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan'];if(n<10)return o[n];if(n===10)return'sepuluh';if(n===11)return'sebelas';if(n<20)return o[n-10]+' belas';const t=Math.floor(n/10),r=n%10;return o[t]+' puluh'+(r?' '+o[r]:'')}
+function filNum(n){const b=['sero','isa','dalawa','tatlo','apat','lima','anim','pito','walo','siyam','sampu'];if(n<=10)return b[n];const teen={11:'labing-isa',12:'labindalawa',13:'labintatlo',14:'labing-apat',15:'labinlima',16:'labing-anim',17:'labimpito',18:'labingwalo',19:'labinsiyam'};if(n<20)return teen[n];const t={2:'dalawampu',3:'tatlumpu',4:'apatnapu',5:'limampu'},r=n%10;return t[Math.floor(n/10)]+(r?' at '+b[r]:'')}
+function thaiNum(n){const d=['ศูนย์','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'];if(n<10)return d[n];const t=Math.floor(n/10),r=n%10;return(t===1?'สิบ':t===2?'ยี่สิบ':d[t]+'สิบ')+(r===0?'':r===1?'เอ็ด':d[r])}
+function viNum(n){const d=['không','một','hai','ba','bốn','năm','sáu','bảy','tám','chín'];if(n<10)return d[n];const t=Math.floor(n/10),r=n%10;let x=t===1?'mười':d[t]+' mươi';if(r===1&&t>1)x+=' mốt';else if(r===4&&t>1)x+=' tư';else if(r===5)x+=' lăm';else if(r)x+=' '+d[r];return x}
+const offices=[
+{id:'hong-kong',city:'Hong Kong',country:'Hong Kong',tz:'Asia/Hong_Kong',lat:22.3193,lon:114.1694,lang:'zh-Hant',intro:['致香港的同事，','向香港的朋友問好，','香港的同事現在是'],time:(h,m)=>zhNum(h)+'時'+zhNum(m)+'分'},
+{id:'shanghai',city:'Shanghai',country:'China',tz:'Asia/Shanghai',lat:31.2304,lon:121.4737,lang:'zh-Hans',intro:['给上海的同事，','向上海的朋友问好，','上海的同事现在是'],time:(h,m)=>zhNum(h)+'时'+zhNum(m)+'分'},
+{id:'beijing',city:'Beijing',country:'China',tz:'Asia/Shanghai',lat:39.9042,lon:116.4074,lang:'zh-Hans',intro:['给北京的同事，','向北京的朋友问好，','北京的同事现在是'],time:(h,m)=>zhNum(h)+'时'+zhNum(m)+'分'},
+{id:'jakarta',city:'Jakarta',country:'Indonesia',tz:'Asia/Jakarta',lat:-6.2088,lon:106.8456,lang:'id',intro:['Untuk rekan kami di Jakarta,','Salam untuk teman-teman di Jakarta,','Bagi kolega kami di Jakarta,'],time:(h,m)=>'pukul '+austNum(h)+(m?' lewat '+austNum(m)+' menit':' tepat')},
+{id:'manila',city:'Manila',country:'Philippines',tz:'Asia/Manila',lat:14.5995,lon:120.9842,lang:'fil',intro:['Para sa mga kaibigan natin sa Maynila,','Para sa ating mga kasamahan sa Maynila,','Sa mga kaibigan natin sa Maynila,'],time:(h,m)=>'alas '+['dose','una','dos','tres','kwatro','singko','sais','siyete','otso','nuwebe','diyes','onse'][h%12]+(m?' at '+filNum(m):' eksakto')},
+{id:'singapore',city:'Singapore',country:'Singapore',tz:'Asia/Singapore',lat:1.3521,lon:103.8198,lang:'en',intro:['For our colleagues in Singapore,','For our friends in Singapore,','Over in Singapore, it is'],time:enTime},
+{id:'bangkok',city:'Bangkok',country:'Thailand',tz:'Asia/Bangkok',lat:13.7563,lon:100.5018,lang:'th',intro:['สำหรับเพื่อนร่วมงานที่กรุงเทพฯ','ถึงเพื่อน ๆ ที่กรุงเทพฯ','สำหรับทีมงานที่กรุงเทพฯ'],time:(h,m)=>thaiNum(h)+' นาฬิกา '+thaiNum(m)+' นาที'},
+{id:'ho-chi-minh-city',city:'Ho Chi Minh City',country:'Vietnam',tz:'Asia/Ho_Chi_Minh',lat:10.8231,lon:106.6297,lang:'vi',intro:['Dành cho các bạn ở Thành phố Hồ Chí Minh,','Gửi đến đồng nghiệp ở Thành phố Hồ Chí Minh,','Với bạn bè ở Thành phố Hồ Chí Minh,'],time:(h,m)=>viNum(h)+' giờ '+viNum(m)+' phút'},
+{id:'kuala-lumpur',city:'Kuala Lumpur',country:'Malaysia',tz:'Asia/Kuala_Lumpur',lat:3.139,lon:101.6869,lang:'ms',intro:['Untuk rakan-rakan kami di Kuala Lumpur,','Buat sahabat kami di Kuala Lumpur,','Untuk pasukan di Kuala Lumpur,'],time:(h,m)=>'pukul '+austNum(h,'kosong')+(m?' lewat '+austNum(m,'kosong')+' minit':' tepat')},
+{id:'macau',city:'Macau',country:'Macau',tz:'Asia/Macau',lat:22.1987,lon:113.5439,lang:'zh-Hant',intro:['致澳門的同事，','向澳門的朋友問好，','澳門的同事現在是'],time:(h,m)=>zhNum(h)+'時'+zhNum(m)+'分'},
+{id:'auckland',city:'Auckland',country:'New Zealand',tz:'Pacific/Auckland',lat:-36.8509,lon:174.7645,lang:'en',intro:['For our friends in Auckland,','For our colleagues in Auckland,','Over in Auckland, it is'],time:enTime},
+{id:'wellington',city:'Wellington',country:'New Zealand',tz:'Pacific/Auckland',lat:-41.2866,lon:174.7756,lang:'en',intro:['For our friends in Wellington,','For our colleagues in Wellington,','Over in Wellington, it is'],time:enTime},
+{id:'sydney',city:'Sydney',country:'Australia',tz:'Australia/Sydney',lat:-33.8688,lon:151.2093,lang:'en',intro:['For our friends in Sydney,','For our colleagues in Sydney,','Over in Sydney, it is'],time:enTime},
+{id:'brisbane',city:'Brisbane',country:'Australia',tz:'Australia/Brisbane',lat:-27.4698,lon:153.0251,lang:'en',intro:['For our friends in Brisbane,','For our colleagues in Brisbane,','Over in Brisbane, it is'],time:enTime}
+];
+const mel={id:'melbourne',city:'Melbourne',country:'Australia',tz:'Australia/Melbourne',lat:-37.8136,lon:144.9631,lang:'en',time:enTime};
+const all=[mel,...offices],byId=Object.fromEntries(all.map(o=>[o.id,o]));
+const weather=new Map();let weatherStatus='loading',weatherUpdated=0;
+function panel(name,cycle,offset){const msg=document.getElementById(name+'Message');return{name,cycle,offset,title:document.getElementById(name+'Title'),progress:document.getElementById(name+'Progress'),msg,lines:[...msg.querySelectorAll('.line')].map(root=>({root,typed:root.querySelector('.typed'),cursor:root.querySelector('.cursor')})),office:name==='centre'?mel:null,key:'',rendered:[...msg.querySelectorAll('.typed')].map(x=>x.textContent),token:0}}
+const panels={left:panel('left',SIDE_MS,0),centre:panel('centre',CENTRE_MS,0),right:panel('right',SIDE_MS,RIGHT_OFFSET)};
+let start=performance.now(),last=-1,first=true;
+function now(perf=performance.now()){if(freeze){const d=new Date(freeze);if(!isNaN(d))return d}if(!demo)return new Date();return new Date(Date.now()+(perf-start)*(SIDE_MS/demoInterval))}
+function parts(date,tz){const x=Object.fromEntries(new Intl.DateTimeFormat('en-AU',{timeZone:tz,hourCycle:'h23',hour:'2-digit',minute:'2-digit',second:'2-digit',weekday:'short',day:'2-digit',month:'short',year:'numeric'}).formatToParts(date).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));return{h:+x.hour,m:+x.minute,s:+x.second,digital:x.hour+':'+x.minute+':'+x.second,date:x.weekday+' '+x.day+' '+x.month,weekday:x.weekday,year:+x.year,month:x.month,day:+x.day}}
+function offsetMinutes(date,tz){const x=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(date).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));return Math.round((Date.UTC(+x.year,+x.month-1,+x.day,+x.hour,+x.minute,+x.second)-date.getTime())/60000)}
+function slot(p,date){return Math.floor((date.getTime()-p.offset)/p.cycle)}
+function officeFor(p,date){if(p.name==='centre')return mel;const pin=pinned[p.name];if(pin&&byId[pin])return byId[pin];const i=((slot(p,date)%offices.length)+offices.length)%offices.length;if(p.name==='left')return offices[i];let j=(i+Math.ceil(offices.length/2))%offices.length;const left=officeFor(panels.left,date);if(offices[j].id===left.id)j=(j+1)%offices.length;return offices[j]}
+function formatDuration(minutes){const n=Math.abs(minutes),h=Math.floor(n/60),m=n%60;if(!h)return m+' '+(m===1?'minute':'minutes');if(!m)return enNum(h)+' '+(h===1?'hour':'hours');if(m===30)return h===0?'half an hour':enNum(h)+' and a half hours';return enNum(h)+' '+(h===1?'hour':'hours')+' '+enNum(m)+' minutes'}
+function relationLine(p,o,date){const diff=offsetMinutes(date,o.tz)-offsetMinutes(date,mel.tz);const v=((slot(p,date)%3)+3)%3;if(diff===0)return p.name==='left'?['Keeping pace with Melbourne.','On Melbourne time today.','Sharing Melbourne time.'][v]:['In step with Melbourne today.','Running alongside Melbourne.','Melbourne time, in sync.'][v];const duration=formatDuration(diff);if(diff>0)return p.name==='left'?[duration+' ahead of Melbourne.','The day runs '+duration+' ahead.','Leading Melbourne by '+duration+'.'][v]:['Leading Melbourne by '+duration+'.',duration+' further into the day.','Ahead of Melbourne by '+duration+'.'][v];return p.name==='left'?[duration+' behind Melbourne.','Following Melbourne by '+duration+'.','The day trails Melbourne by '+duration+'.'][v]:['Following Melbourne by '+duration+'.',duration+' earlier than Melbourne.','Behind Melbourne by '+duration+'.'][v]}
+function weatherLabel(code){if(code===0)return'Clear';if(code===1)return'Mainly clear';if(code===2)return'Partly cloudy';if(code===3)return'Overcast';if(code===45||code===48)return'Foggy';if(code>=51&&code<=57)return'Drizzle';if(code>=61&&code<=67)return'Rain';if(code>=71&&code<=77)return'Snow';if(code>=80&&code<=82)return'Showers';if(code>=85&&code<=86)return'Snow showers';if(code>=95)return'Thunderstorms';return'Current weather'}
+function weatherAdjective(code){if(code===0)return'clear';if(code<=2)return'bright';if(code===3)return'cloudy';if(code===45||code===48)return'misty';if((code>=51&&code<=67)||(code>=80&&code<=82))return'rainy';if((code>=71&&code<=77)||(code>=85&&code<=86))return'snowy';if(code>=95)return'stormy';return'changeable'}
+function temperatureWord(t){if(t<7)return'cold';if(t<14)return'cool';if(t<22)return'mild';if(t<29)return'warm';return'hot'}
+function dayPart(h){if(h<5)return'night';if(h<12)return'morning';if(h<17)return'afternoon';if(h<21)return'evening';return'night'}
+function melbourneThird(o,pt){const w=weather.get(o.id);if(!w)return'A Melbourne '+dayPart(pt.h)+'.';return'A '+temperatureWord(w.temperature)+', '+weatherAdjective(w.code)+' '+dayPart(pt.h)+'.'}
+function message(p,o,pt,date){if(p.name==='centre'){const leads=['In Melbourne, it is','Here in Melbourne, it is','For Melbourne, the time is'];return[leads[pt.m%leads.length],o.time(pt.h,pt.m),melbourneThird(o,pt)]}const i=((slot(p,date)+(p.name==='right'?1:0))%o.intro.length+o.intro.length)%o.intro.length;return[o.intro[i],o.time(pt.h,pt.m),relationLine(p,o,date)]}
+function title(p,o,pt){const w=weather.get(o.id),weatherText=w?Math.round(w.temperature)+'° · '+weatherLabel(w.code):(weatherStatus==='failed'?'Weather unavailable':'Weather loading');p.title.innerHTML='<span class="title-left"><span class="place">'+o.city+', '+o.country+'</span><span class="clock">'+pt.digital+'</span><span class="date">'+pt.date+'</span></span><span class="weather '+(w?'':'is-stale')+'">'+weatherText+'</span>'}
+function measure(p,lines){const probe=p.lines[0].root.cloneNode(true),typed=probe.querySelector('.typed');probe.querySelector('.cursor').remove();Object.assign(probe.style,{position:'absolute',left:'-10000px',top:'0',width:'max-content',maxWidth:'none',overflow:'visible',visibility:'hidden'});document.body.append(probe);function widthAt(size){probe.style.fontSize=size+'px';let wide=0;for(const t of lines){typed.textContent=t||' ';wide=Math.max(wide,probe.scrollWidth)}return wide}let lo=MIN_SIZE,hi=MAX_SIZE;for(let k=0;k<16;k++){const mid=(lo+hi)/2;if(widthAt(mid)<=PANEL_TEXT_W-10)lo=mid;else hi=mid}probe.remove();return Math.floor(lo*100)/100}
+function size(p,lines){const s=measure(p,lines);p.msg.style.setProperty('--message-size',s+'px');p.lines.forEach(l=>l.root.style.fontSize=s+'px')}
+function cursor(l,working,visible=true){l.cursor.hidden=!visible;l.cursor.classList.toggle('blink',visible&&!working)}
+function sleep(ms,token,p){return new Promise((res,rej)=>setTimeout(()=>token===p.token?res():rej(new DOMException('Superseded','AbortError')),ms))}
+async function clear(p,token){for(const l of [...p.lines].reverse()){cursor(l,true);if(noanim||reduced){l.typed.textContent='';cursor(l,false,false);continue}let t=l.typed.textContent;while(t){t=t.slice(0,-1);l.typed.textContent=t;await sleep(10,token,p)}cursor(l,false,false)}}
+async function type(p,lines,token){for(let i=0;i<p.lines.length;i++){const l=p.lines[i];cursor(l,true);l.typed.textContent='';if(noanim||reduced)l.typed.textContent=lines[i];else for(const ch of lines[i]){l.typed.textContent+=ch;await sleep(p.name==='centre'?19:16,token,p)}cursor(l,false,i===2)}}
+function instant(p,o,lines,key){p.msg.lang=o.lang;size(p,lines);p.office=o;p.key=key;p.rendered=[...lines];p.lines.forEach((l,i)=>{l.typed.textContent=lines[i];cursor(l,false,i===2)})}
+async function transition(p,o,lines,key){const token=++p.token;p.msg.lang=o.lang;try{await clear(p,token);size(p,lines);p.office=o;p.key=key;p.rendered=[...lines];await type(p,lines,token)}catch(e){if(e.name!=='AbortError')console.error(e)}}
+function progress(p,date){const e=date.getTime()-p.offset,phase=((e%p.cycle)+p.cycle)%p.cycle;p.progress.style.transform='scaleX('+(phase/p.cycle).toFixed(6)+')'}
+function update(date){for(const p of Object.values(panels)){const o=officeFor(p,date),pt=parts(date,o.tz),key=p.name==='centre'?o.id+'-'+pt.year+'-'+pt.month+'-'+pt.day+'-'+pt.h+'-'+pt.m:o.id+'-'+slot(p,date),lines=message(p,o,pt,date);title(p,o,pt);if(key!==p.key){if(first)instant(p,o,lines,key);else transition(p,o,lines,key)}progress(p,date)}first=false}
+function refreshMelbourneWeatherLine(){const p=panels.centre,date=now(),pt=parts(date,mel.tz),lines=message(p,mel,pt,date);size(p,lines);p.lines[2].typed.textContent=lines[2];p.rendered=[...lines]}
+function scale(){const v=visualViewport,w=v?v.width:innerWidth,h=v?v.height:innerHeight,s=Math.min(w/STAGE_W,h/STAGE_H);stage.style.transform='translate(-50%,-50%) scale('+s+')';rotate.hidden=!(w<h&&w<900)}
+function mockData(){all.forEach((o,i)=>weather.set(o.id,{temperature:10+(i%19),code:[0,1,2,3,45,61,80,95][i%8],updated:Date.now()}));weatherStatus='ready';weatherUpdated=Date.now()}
+async function fetchWeather(){if(mockWeather){mockData();return}const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);try{const lat=all.map(o=>o.lat).join(','),lon=all.map(o=>o.lon).join(','),url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code&temperature_unit=celsius&forecast_days=1';const r=await fetch(url,{signal:controller.signal,cache:'no-store'});if(!r.ok)throw new Error('Weather '+r.status);const data=await r.json(),items=Array.isArray(data)?data:[data];items.forEach((item,i)=>{if(all[i]&&item.current)weather.set(all[i].id,{temperature:Number(item.current.temperature_2m),code:Number(item.current.weather_code),updated:Date.now()})});weatherStatus='ready';weatherUpdated=Date.now();try{localStorage.setItem('triptych-weather-cache',JSON.stringify(Object.fromEntries(weather)))}catch(_){} }catch(e){weatherStatus='failed';try{const cached=JSON.parse(localStorage.getItem('triptych-weather-cache')||'{}');for(const [id,value] of Object.entries(cached))weather.set(id,value);if(weather.size)weatherStatus='cached'}catch(_){}console.warn('Weather unavailable',e)}finally{clearTimeout(timer)}}
+function tick(perf=performance.now()){const date=now(perf),sec=Math.floor(date.getTime()/1000);if(sec!==last){last=sec;update(date)}if(!weatherUpdated||Date.now()-weatherUpdated>WEATHER_REFRESH){weatherUpdated=Date.now();fetchWeather().then(()=>{refreshMelbourneWeatherLine();update(now())})}requestAnimationFrame(tick)}
+addEventListener('resize',scale,{passive:true});addEventListener('orientationchange',scale,{passive:true});visualViewport&&visualViewport.addEventListener('resize',scale,{passive:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden){last=-1;scale();fetchWeather()}});
+window.__clock={get panels(){return Object.fromEntries(Object.entries(panels).map(([n,p])=>[n,{office:p.office&&p.office.id,title:p.title.textContent,lines:p.lines.map(l=>l.typed.textContent),fontSize:parseFloat(getComputedStyle(p.lines[0].root).fontSize),progress:parseFloat((p.progress.style.transform.match(/scaleX\(([^)]+)/)||[])[1]||0)}]))},get weather(){return Object.fromEntries(weather)},offsetMinutes,relationLine};
+scale();update(now());fetchWeather().then(()=>{refreshMelbourneWeatherLine();update(now())});requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
