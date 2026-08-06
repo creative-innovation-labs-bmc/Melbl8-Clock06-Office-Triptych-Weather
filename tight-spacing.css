@@ -1,0 +1,16 @@
+/* Tighter three-line stack for the 3840 × 804 triptych. */
+.message {
+  top: 132px !important;
+  bottom: 70px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-content: normal !important;
+  grid-template-rows: none !important;
+  gap: 18px !important;
+  row-gap: 18px !important;
+}
+
+.message > .line {
+  flex: 0 0 auto !important;
+}
