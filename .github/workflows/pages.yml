@@ -31,40 +31,14 @@ jobs:
           cp robots.txt _site/robots.txt
           touch _site/.nojekyll
 
-      - name: Build self-hosted PT Serif and Open Sans
+      - name: Vendor exact PT Serif and Open Sans files
         run: |
-          if [ ! -f assets/fonts/PTSerif-Bold.woff2 ] || [ ! -f assets/fonts/OpenSans-Regular.woff2 ] || [ ! -f assets/fonts/OpenSans-Semibold.woff2 ]; then
-            mkdir -p /tmp/clock-fonts
-            curl --fail --location --retry 3 \
-              https://raw.githubusercontent.com/creative-innovation-labs-bmc/Melbl8-Clock05-Office-Triptych/main/assets/fonts/PT_Serif-Web-Bold.ttf \
-              --output /tmp/clock-fonts/PTSerif-Bold.ttf
-            curl --fail --location --retry 3 \
-              https://raw.githubusercontent.com/creative-innovation-labs-bmc/Melbl8-Clock05-Office-Triptych/main/assets/fonts/OpenSans-Variable.ttf \
-              --output /tmp/clock-fonts/OpenSans-Variable.ttf
-            python -m pip install --quiet fonttools brotli
-            python - <<'PY'
-          from fontTools.ttLib import TTFont
-          from fontTools.varLib.instancer import instantiateVariableFont
-          from pathlib import Path
-
-          out = Path('assets/fonts')
-          out.mkdir(parents=True, exist_ok=True)
-
-          pt = TTFont('/tmp/clock-fonts/PTSerif-Bold.ttf')
-          pt.flavor = 'woff2'
-          pt.save(out / 'PTSerif-Bold.woff2')
-
-          source = TTFont('/tmp/clock-fonts/OpenSans-Variable.ttf')
-          for weight, name in [(400, 'OpenSans-Regular.woff2'), (600, 'OpenSans-Semibold.woff2')]:
-              instance = instantiateVariableFont(source, {'wght': weight, 'wdth': 100}, inplace=False)
-              instance.flavor = 'woff2'
-              instance.save(out / name)
-          PY
-          fi
-          cp assets/fonts/*.woff2 _site/assets/fonts/
-
-      - name: Add font licence records
-        run: |
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/creative-innovation-labs-bmc/Melbl8-Clock05-Office-Triptych/main/assets/fonts/PT_Serif-Web-Bold.ttf \
+            --output assets/fonts/PT_Serif-Web-Bold.ttf
+          curl --fail --location --retry 3 \
+            https://raw.githubusercontent.com/creative-innovation-labs-bmc/Melbl8-Clock05-Office-Triptych/main/assets/fonts/OpenSans-Variable.ttf \
+            --output assets/fonts/OpenSans-Variable.ttf
           curl --fail --location --retry 3 \
             https://raw.githubusercontent.com/googlefonts/opensans/main/OFL.txt \
             --output assets/fonts/OpenSans-OFL.txt
@@ -74,11 +48,11 @@ jobs:
           cat > assets/fonts/SOURCES.md <<'EOF'
           # Font sources
 
-          - PT Serif Bold: self-hosted build derived from the PT Serif file previously vendored in the Clock05 repository.
-          - Open Sans Regular and Semibold: static WOFF2 instances generated from the Open Sans variable font previously vendored in the Clock05 repository.
-          - Both families are distributed under the SIL Open Font License 1.1. Licence files are included in this directory.
+          - PT Serif Bold: copied from the previously vendored official Google Fonts file in Melbl8-Clock05-Office-Triptych.
+          - Open Sans variable: copied from the previously vendored official Google Fonts file in Melbl8-Clock05-Office-Triptych.
+          - Both font families are distributed under the SIL Open Font License 1.1.
           EOF
-          cp assets/fonts/*-OFL.txt assets/fonts/SOURCES.md _site/assets/fonts/
+          cp assets/fonts/* _site/assets/fonts/
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
