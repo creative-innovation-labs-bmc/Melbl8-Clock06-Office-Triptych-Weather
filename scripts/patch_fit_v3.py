@@ -6,13 +6,22 @@ import re
 PAYLOAD = Path('build/index.html.gz.b64')
 html = gzip.decompress(base64.b64decode(PAYLOAD.read_text().strip())).decode('utf-8')
 
-if 'id="fit-stack-v3"' in html and 'const widest=Math.max(...p.lines.map(l=>Math.ceil(l.root.scrollWidth)))' in html:
+typed_width_marker = "const widest=Math.max(...p.lines.map(l=>Math.ceil(l.typed.getBoundingClientRect().width+18)))"
+if 'id="fit-stack-v4"' in html and typed_width_marker in html and 'MAX_SIZE=116,MIN_SIZE=42' in html:
     Path('index.html').write_text(html, encoding='utf-8')
-    print('fit-stack-v3 already present')
+    print('fit-stack-v4 already present')
     raise SystemExit(0)
 
-new_layout = '''<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit3">
-<style id="fit-stack-v3">
+# Keep the tight stack inline so it cannot be lost to stylesheet caching.
+html = re.sub(
+    r'tight-spacing\.css\?v=[^"\']+',
+    'tight-spacing.css?v=20260806-fit4',
+    html,
+    count=1,
+)
+html = html.replace('id="fit-stack-v3"', 'id="fit-stack-v4"', 1)
+if 'id="fit-stack-v4"' not in html:
+    inline_layout = '''<style id="fit-stack-v4">
 .message {
   top: 132px !important;
   bottom: 64px !important;
@@ -32,19 +41,21 @@ new_layout = '''<link rel="stylesheet" href="./tight-spacing.css?v=20260806-fit3
   padding-bottom: .04em !important;
 }
 </style>'''
+    html = html.replace('</head>', inline_layout + '</head>', 1)
 
-link_pattern = re.compile(r'<link rel="stylesheet" href="\./tight-spacing\.css\?v=[^"]+">')
-html, link_count = link_pattern.subn(new_layout, html, count=1)
-if link_count == 0:
-    if '</head>' not in html:
-        raise SystemExit('No head element found for layout injection')
-    html = html.replace('</head>', new_layout + '</head>', 1)
+# Long translations may need to go slightly below the old 50px floor.
+html = html.replace('MAX_SIZE=116,MIN_SIZE=50', 'MAX_SIZE=116,MIN_SIZE=42', 1)
 
-pattern = re.compile(
-    r"function measure\(p,lines\)\{.*?\}\nfunction size\(p,lines\)\{",
-    re.DOTALL,
-)
-replacement = '''function measure(p,lines){
+# Measure the actual rendered text spans, not the full-width flex line containers.
+old_width_marker = "const widest=Math.max(...p.lines.map(l=>Math.ceil(l.root.scrollWidth)))"
+if old_width_marker in html:
+    html = html.replace(old_width_marker, typed_width_marker, 1)
+elif typed_width_marker not in html:
+    pattern = re.compile(
+        r"function measure\(p,lines\)\{.*?\}\nfunction size\(p,lines\)\{",
+        re.DOTALL,
+    )
+    replacement = '''function measure(p,lines){
   const snapshots=p.lines.map(l=>({text:l.typed.textContent,cursorHidden:l.cursor.hidden,fontSize:l.root.style.fontSize}));
   const previousVisibility=p.msg.style.visibility;
   p.msg.style.visibility='hidden';
@@ -53,8 +64,8 @@ replacement = '''function measure(p,lines){
   for(let k=0;k<18;k++){
     const mid=(lo+hi)/2;
     p.lines.forEach(l=>{l.root.style.fontSize=mid+'px'});
-    const widest=Math.max(...p.lines.map(l=>Math.ceil(l.root.scrollWidth)));
-    if(widest<=PANEL_TEXT_W-12)lo=mid;else hi=mid;
+    const widest=Math.max(...p.lines.map(l=>Math.ceil(l.typed.getBoundingClientRect().width+18)));
+    if(widest<=PANEL_TEXT_W)lo=mid;else hi=mid;
   }
   const fitted=Math.floor(lo*100)/100;
   p.lines.forEach((l,index)=>{l.typed.textContent=snapshots[index].text;l.cursor.hidden=snapshots[index].cursorHidden;l.root.style.fontSize=snapshots[index].fontSize});
@@ -62,26 +73,19 @@ replacement = '''function measure(p,lines){
   return fitted;
 }
 function size(p,lines){'''
-html, count = pattern.subn(replacement, html, count=1)
-if count != 1:
-    raise SystemExit(f'Expected one measure function replacement, found {count}')
+    html, count = pattern.subn(replacement, html, count=1)
+    if count != 1:
+        raise SystemExit(f'Expected one measure function replacement, found {count}')
 
-html = html.replace(
-    '<span class="typed">Keeping pace with Melbourne.</span>',
-    '<span class="typed">與墨爾本時間相同。</span>',
-    1,
-)
-html = html.replace(
-    '<span class="typed">Following Melbourne by three hours.</span>',
-    '<span class="typed">Jakarta tiga jam lebih lambat dari Melbourne.</span>',
-    1,
-)
+# The old v3 threshold was based on a full-width container. Use the true panel width now.
+html = html.replace('if(widest<=PANEL_TEXT_W-12)lo=mid;else hi=mid', 'if(widest<=PANEL_TEXT_W)lo=mid;else hi=mid', 1)
 
 required = [
-    'id="fit-stack-v3"',
-    'tight-spacing.css?v=20260806-fit3',
-    'const widest=Math.max(...p.lines.map(l=>Math.ceil(l.root.scrollWidth)))',
-    'padding-bottom: .04em !important',
+    'id="fit-stack-v4"',
+    'tight-spacing.css?v=20260806-fit4',
+    typed_width_marker,
+    'MAX_SIZE=116,MIN_SIZE=42',
+    'gap: 4px !important',
 ]
 for marker in required:
     if marker not in html:
@@ -92,4 +96,4 @@ PAYLOAD.write_text(
     base64.b64encode(gzip.compress(html.encode('utf-8'), compresslevel=9, mtime=0)).decode('ascii') + '\n',
     encoding='utf-8',
 )
-print('Applied fit-stack-v3 to production source and payload')
+print('Applied fit-stack-v4 to production source and payload')
